@@ -1,0 +1,20 @@
+version: "3.2"
+
+services:
+  family_api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: family_api
+    image: family_api:${VERSION:-latest}
+    volumes:
+      - .:/app
+    ports:
+      - "8114:80"
+    env_file:
+      - .env
+    networks:
+      - family_net
+
+networks:
+  family_net:
