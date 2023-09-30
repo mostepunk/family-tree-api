@@ -106,10 +106,13 @@ class DatabaseSettings(BaseSettings):
     db_host: str = "localhost"
     db_port: str = 5432
     db_name: str = "postgres"
+
     echo: bool = False
     echo_pool = "debug"
+
     db_pool_min_size: PositiveInt = 1
     db_pool_max_size: PositiveInt = 1
+
     statement_cache_size: NonNegativeInt = 0  # 0 to work with transaction_pooling
 
     @property
