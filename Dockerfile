@@ -10,6 +10,4 @@ COPY ./requirements.txt .
 RUN pip install -r ./requirements.txt
 COPY . .
 
-# ENTRYPOINT bash -c "uvicorn family.application:app --host 0.0.0.0 --port 80 --reload"
 ENTRYPOINT bash -c "uvicorn main:app --host 0.0.0.0 --port 80 --reload"
-# ENTRYPOINT bash -c "python main.py"
