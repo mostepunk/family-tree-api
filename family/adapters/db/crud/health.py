@@ -13,4 +13,5 @@ class HealthCRUD(BaseCRUD):
         """check database connection."""
         res = await self.session.execute(text("SELECT VERSION()"))
         results = res.fetchone()
-        logging.debug(f"DB healthcheck: {results}")
+        if results:
+            logging.debug("[HELATH]: Database OK")

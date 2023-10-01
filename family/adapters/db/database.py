@@ -47,3 +47,13 @@ def create_start_app_handler() -> Callable:
                     raise err
 
     return check_database
+
+
+async def get_session() -> AsyncSession:
+    async with async_session() as session:
+        try:
+            yield session
+        finally:
+            # это надо при подключении через PGBouncer
+            # await session.rollback()
+            await session.close()

@@ -43,6 +43,7 @@ class AppSettings(BaseSettings):
     routes_nolog: list = [  # ручки которые не логируются мидлварью
         "/docs",
         "/openapi.json",
+        "/v1/healthcheck",
     ]
 
     class Config:
