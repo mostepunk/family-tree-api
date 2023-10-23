@@ -2,11 +2,13 @@ import asyncio
 from typing import Callable
 
 from loguru import logger as logging
-from sqlalchemy import text
+from sqlalchemy import select, text
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from family.settings import db_settings
+from family.adapters.db.models import AccountModel, RoleModel
+from family.settings import admin_settings, db_settings
 
 engine = create_async_engine(
     db_settings.dsn,
@@ -28,6 +30,21 @@ NUMBER_OF_ATTEMPTS = 3
 TIME_SLEEP = 5
 
 
+async def create_superadmin(session):
+    query = select(RoleModel.uuid).where(RoleModel.name == "ROOT")
+    role_uuid = await session.scalar(query)
+
+    credentials = admin_settings.credentials
+    credentials["role_uuid"] = role_uuid
+
+    query = pg_insert(AccountModel).values(credentials).returning(AccountModel)
+    admin = await session.scalar(query.on_conflict_do_nothing())
+    await session.commit()
+
+    if admin:
+        logging.debug(f"Created SuperUser: {admin}")
+
+
 def create_start_app_handler() -> Callable:
     async def check_database() -> None:
         attempt = 0
@@ -35,9 +52,11 @@ def create_start_app_handler() -> Callable:
             try:
                 async with engine.connect() as conn:
                     await conn.execute(text("SELECT 1"))
-                    logging.info("DB connected")
+                    logging.debug("DB connected")
+                    await create_superadmin(conn)
                     break
             except Exception as err:
+                logging.error(f"ERROR: {err}")
                 if attempt < NUMBER_OF_ATTEMPTS:
                     logging.error(f"try connect to db...{attempt}")
                     attempt += 1

@@ -1,8 +1,11 @@
 from enum import Enum, unique
 from typing import Any, Dict, List
 
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseSettings as pyBaseSettings
 from pydantic import NonNegativeInt, PositiveInt
+
+from family.utils.password import get_password_hash
 
 
 @unique
@@ -130,6 +133,49 @@ class DatabaseSettings(BaseSettings):
         return f"{self.dialect}+asyncpg://{self._uri}"
 
 
+class JWTSettings(BaseSettings):
+    SECRET_KEY: str = (
+        "06fc53c2b88753232b1060b644f05e2165d364977d226775616ea6330c0189b96c"
+    )
+    ALG: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    @property
+    def token_expire(self) -> int:
+        if self.environment == Environment.local:
+            return 1440  # 24 hours
+
+        return self.ACCESS_TOKEN_EXPIRE_MINUTES
+
+    class Config:
+        env_prefix = "JWT_"
+
+
+class AdminSettings(BaseSettings):
+    login: str = "admin"
+    password: str = "admin"
+    email: str = "admin@domain.com"
+
+    class Config:
+        env_prefix = "SUPERADMIN_"
+
+    @property
+    def credentials(self):
+        return {
+            "username": self.login,
+            "hashed_password": get_password_hash(self.password),
+            "email": self.email,
+            "is_enabled": True,
+            "role_uuid": None,
+        }
+
+
 db_settings = DatabaseSettings()
 server_settings = ServerSettings()
 app_settings = AppSettings()
+jwt_settings = JWTSettings()
+admin_settings = AdminSettings()
+
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=app_settings.api_prefix + "/v1/login",
+)
