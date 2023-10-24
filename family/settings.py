@@ -47,6 +47,7 @@ class AppSettings(BaseSettings):
         "/openapi.json",
         "/v1/healthcheck",
         "/v1/accounts/login",
+        "/v1/accounts/token",
     ]
 
     @property

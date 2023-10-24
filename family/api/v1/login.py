@@ -1,8 +1,9 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 
+from family.adapters.schemas.accounts import AccountSchema
 from family.api.dependencies import create_token, get_user_from_token
 from family.services.accounts import AccountService, AccountUOW
 
@@ -22,3 +23,17 @@ async def login_user(
 async def refresh_token(account: Annotated[get_user_from_token, Depends()]):
     service = AccountService(AccountUOW())
     return {"access_token": await create_token(account), "token_type": "bearer"}
+
+
+@login.get(
+    "/me", summary="information about authorised user", response_model=AccountSchema
+)
+async def about_me(account: Annotated[get_user_from_token, Depends()]):
+    return account
+
+
+@login.get("/token", summary="information about authorised user", response_model=str)
+async def token_str(
+    request: Request, account: Annotated[get_user_from_token, Depends()]
+):
+    return request.headers.get("authorization").lstrip("Bearer ")
