@@ -2,13 +2,13 @@ import asyncio
 from typing import Callable
 
 from loguru import logger as logging
-from sqlalchemy import select, text
+from sqlalchemy import orm, select, text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from family.adapters.db.models import AccountModel, RoleModel
-from family.settings import admin_settings, db_settings
+from family.settings import DatabaseSettings, admin_settings, db_settings
 
 engine = create_async_engine(
     db_settings.dsn,
@@ -76,3 +76,28 @@ async def get_session() -> AsyncSession:
             # это надо при подключении через PGBouncer
             # await session.rollback()
             await session.close()
+
+
+class Database:
+    def __init__(self, db_settings: DatabaseSettings) -> None:
+        self._engine = create_async_engine(
+            db_settings.dsn,
+            pool_pre_ping=True,
+            pool_use_lifo=True,
+            pool_size=20,
+            echo=db_settings.echo,
+            echo_pool=db_settings.echo_pool,
+            max_overflow=5,
+        )
+        self._session_factory = orm.scoped_session(
+            sessionmaker(
+                autocommit=False,
+                autoflush=False,
+                class_=AsyncSession,
+                bind=self._engine,
+                expire_on_commit=False,
+            ),
+        )
+
+    def session(self):
+        return self._session_factory()

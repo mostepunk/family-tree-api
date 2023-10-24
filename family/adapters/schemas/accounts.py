@@ -51,7 +51,3 @@ class AccountDBSchema(AccountSchema, BaseDBSchema):
     hashed_password: str
 
     model_config = ConfigDict(from_attributes=True)
-    # @field_validator("roles", mode="after")
-    # @classmethod
-    # def validate_roles(cls, role):
-    #     return [role.name]

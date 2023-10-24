@@ -87,6 +87,7 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "f
 "BaseUOW" = "from family.services.base import BaseUOW"
 "BaseCRUD" = "from family.adapters.db.crud.base import BaseCRUD"
 "AccountDBSchema" = "from family.adapters.schemas.accounts import AccountDBSchema"
+"Container" = "from family.utils.container import Container"
 "BaseTable" = "from family.adapters.db.models.base import BaseTable"
 
 [tool.isort]

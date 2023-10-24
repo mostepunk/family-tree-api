@@ -2,8 +2,6 @@
 
 from abc import ABC, abstractmethod
 
-from family.adapters.db.database import async_session
-
 
 class AbstractUnitOfWork(ABC):
     async def __aenter__(self):
@@ -25,7 +23,7 @@ class AbstractUnitOfWork(ABC):
 
 
 class BaseUOW(AbstractUnitOfWork):
-    def __init__(self, session_factory=async_session):
+    def __init__(self, session_factory):
         self.session_factory = session_factory
 
     async def __aenter__(self):
