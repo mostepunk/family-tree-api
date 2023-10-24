@@ -1,0 +1,96 @@
+[tool.ruff]
+select = ["ALL"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "migrations",
+    "dist",
+    "node_modules",
+    "venv",
+    "sss.py"
+]
+ignore = [
+    "ANN",      # Type hints related, let mypy handle these.
+    "COM812",   # "Trailing comma missing". If black is happy, I'm happy.
+    "D",        # Docstrings related
+    "E501",     # "Line too long". If black is happy, I'm happy.
+    "EM101",    # "Exception must not use a string literal, assign to variable first"
+    "EM102",    # "Exception must not use an f-string literal, assign to variable first"
+    "PTH",      # User Pathlib stuff over os.*. Should migrate to Pathlib at some point.
+    "RET504",   # "Unnecessary variable assignment before `return` statement"
+    "S101",     # "Use of `assert` detected"
+    "SIM108",   # "Use ternary operator ...". Ternary is harmful for readability in some cases.
+    "TRY003",   # "Avoid specifying long messages outside the exception class"
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "G004",     # Logging statement uses f-string
+    "N805",     # First argument of a method should be named `self`
+    ]
+line-length = 120
+target-version = "py37"
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[project]
+# Support Python 3.10+.
+requires-python = ">=3.10"
+
+[tool.ruff.per-file-ignores]
+"family/adapters/db/models/__init__.py" = ["F401", "F403"]
+
+[tool.ruff.flake8-builtins]
+builtins-ignorelist = ["id"]
+
+[tool.ruff.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "fastapi.File"]
+
+[tool.autoimport.common_statements]
+# standart
+"UUID" = "from uuid import UUID"
+"uuid4" = "fomr uuid import uuid4"
+"timedelta" = "from datetime import timedelta"
+
+# installed libs
+"select" = "from sqlalchemy import select"
+"update" = "from sqlalchemy import update"
+"logging" = "from loguru import logger as logging"
+"validator" = "from pydantic import validator"
+"contains_eager" = "from sqlalchemy.orm import contains_eager"
+"selectinload" = "from sqlalchemy.orm import selectinload"
+"root_validator" = "from pydantic import root_validator"
+"parse_obj_as" = "from pydantic import parse_obj_as"
+"func" = "from sqlalchemy import func"
+"APIRouter" = "from fastapi import APIRouter"
+"Depends"= "from fastapi import Depends"
+"AsyncSession" = "from sqlalchemy.ext.asyncio import AsyncSession"
+
+# project libs
+"BaseSchema" = "from family.adapters.schemas.base import BaseSchema"
+"BaseService" = "from family.services.base import BaseService"
+"BaseUOW" = "from family.services.base import BaseUOW"
+"BaseCRUD" = "from family.adapters.db.crud.base import BaseCRUD"
+"AccountDBSchema" = "from family.adapters.schemas.accounts import AccountDBSchema"
+"BaseTable" = "from family.adapters.db.models.base import BaseTable"
+
+[tool.isort]
+known_first_party = ["family"]
+profile = "black"
+known_local_folder = ["family"]
+skip = ["migrations/env.py"]

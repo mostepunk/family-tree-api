@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: family_api
+    container_name: Family-API
     image: family_api:${VERSION:-latest}
     volumes:
       - .:/app
@@ -15,6 +15,18 @@ services:
       - .env
     networks:
       - family_net
+
+  tg_mail:
+    image: "catatnight/postfix"
+    container_name: Family-Mailer
+    environment:
+      - maildomain=${MAIL_DOMAIN}
+      - smtp_user=${MAIL_USER}:${MAIL_PASSWORD}
+    ports:
+      - "25:25"
+    restart: always
+    networks:
+      family_net:
 
 networks:
   family_net:
