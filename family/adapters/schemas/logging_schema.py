@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 
 class MWValidator(BaseModel):
@@ -12,7 +12,7 @@ class MWValidator(BaseModel):
     response_body: Optional[str]
     url: Optional[str]
 
-    @validator("request_body", "response_body", pre=True)
+    @field_validator("request_body", "response_body", mode="after")
     def valid_body(cls, field):  # noqa N805
         """Валидация тела запроса.
 
@@ -36,7 +36,7 @@ class MWValidator(BaseModel):
         if isinstance(field, str):
             return field
 
-    @validator("url", pre=True)
+    @field_validator("url", mode="after")
     def valid_url(cls, url) -> str:  # noqa N805
         """Переделывает параметры в более читаемый вид.
 

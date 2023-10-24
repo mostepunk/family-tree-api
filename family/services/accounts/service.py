@@ -38,6 +38,7 @@ class AccountService(BaseService):
         if not verify_password(password, account.hashed_password):
             raise CREDENTIALS_EXCEPTION
 
+        logging.debug(f"User: {account.username} Logged In")
         await self.update_last_visit(account.uuid)
         return account
 

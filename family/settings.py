@@ -2,8 +2,9 @@ from enum import Enum, unique
 from typing import Any, Dict, List
 
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseSettings as pyBaseSettings
 from pydantic import NonNegativeInt, PositiveInt
+from pydantic_settings import BaseSettings as pyBaseSettings
+from pydantic_settings import SettingsConfigDict
 
 from family.utils.password import get_password_hash
 
@@ -17,11 +18,9 @@ class Environment(str, Enum):
 
 
 class BaseSettings(pyBaseSettings):
-    environment: str = Environment.development
+    model_config = SettingsConfigDict(extra="allow")
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    environment: str = Environment.development
 
 
 class AppSettings(BaseSettings):
@@ -33,7 +32,7 @@ class AppSettings(BaseSettings):
     api_title: str = "API Family-Tree"
     srv_title: str = "SRV Family-Tree"
     version: str = "0.0.1"
-    description = "Backend Family-Tree service 💬"
+    description: str = "Backend Family-Tree service 💬"
 
     max_connection_count: int = 10
     min_connection_count: int = 10
@@ -47,10 +46,8 @@ class AppSettings(BaseSettings):
         "/docs",
         "/openapi.json",
         "/v1/healthcheck",
+        "/v1/accounts/login",
     ]
-
-    class Config:
-        validate_assignment = True
 
     @property
     def base_kwargs(self) -> Dict[str, Any]:
@@ -99,20 +96,19 @@ class AppSettings(BaseSettings):
 class ServerSettings(BaseSettings):
     server_host: str = "127.0.0.1"
     server_port: PositiveInt = 8010
-    debug: bool = 1
+    debug: bool = True
 
 
 class DatabaseSettings(BaseSettings):
     dialect: str = "postgresql"
 
-    db_user: str = "postgres"
-    db_pass: str = "postgres"
-    db_host: str = "localhost"
-    db_port: str = 5432
-    db_name: str = "postgres"
+    db_user: str
+    db_pass: str
+    db_host: str
+    db_port: str
+    db_name: str
 
     echo: bool = False
-    echo_pool = "debug"
 
     db_pool_min_size: PositiveInt = 1
     db_pool_max_size: PositiveInt = 1
@@ -147,8 +143,7 @@ class JWTSettings(BaseSettings):
 
         return self.ACCESS_TOKEN_EXPIRE_MINUTES
 
-    class Config:
-        env_prefix = "JWT_"
+    model_config = SettingsConfigDict(env_prefix="jwt_")
 
 
 class AdminSettings(BaseSettings):
@@ -156,8 +151,7 @@ class AdminSettings(BaseSettings):
     password: str = "admin"
     email: str = "admin@domain.com"
 
-    class Config:
-        env_prefix = "SUPERADMIN_"
+    model_config = SettingsConfigDict(env_prefix="superadmin_")
 
     @property
     def credentials(self):
@@ -177,5 +171,5 @@ jwt_settings = JWTSettings()
 admin_settings = AdminSettings()
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=app_settings.api_prefix + "/v1/login",
+    tokenUrl=app_settings.api_prefix + "/v1/accounts/login",
 )

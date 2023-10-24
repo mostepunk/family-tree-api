@@ -13,7 +13,6 @@ from pydantic import ValidationError
 
 from family.adapters.schemas.accounts import AccountDBSchema, AccountSchema, Roles
 from family.adapters.schemas.token import Token
-from family.resources.timezones import MOSCOW
 from family.settings import Environment, app_settings, jwt_settings, oauth2_scheme
 
 security = HTTPBearer()
@@ -24,9 +23,11 @@ async def create_token(
     expires_delta: timedelta | None = None,
 ) -> str:
     to_encode = Token(
-        username=account.username, email=account.email, roles=account.roles
+        username=account.username,
+        email=account.email,
+        role=account.role.dict(),
     )
-    to_encode.exp = datetime.now(tz=MOSCOW) + timedelta(
+    to_encode.exp = datetime.now() + timedelta(
         minutes=expires_delta or jwt_settings.token_expire
     )
 
@@ -60,12 +61,12 @@ async def get_user_from_token(
     token: Annotated[str, Depends(oauth2_scheme)]
 ) -> AccountSchema:
     """Получение пользователя из токена"""
-    if app_settings.app_env == Environment.local:
+    if app_settings.environment == Environment.local:
         return AccountSchema(
             uuid=uuid4(),
             username="root",
             email="root@domain.com",
-            roles=[Roles.superadmin],
+            role={"level": 0, "name": Roles.superadmin},
         )
 
     try:

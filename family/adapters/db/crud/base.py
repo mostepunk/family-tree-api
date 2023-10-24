@@ -29,10 +29,10 @@ class BaseCRUD:
         )
         res = await self.session.scalar(query)
         if res:
-            return self._out.from_orm(res)
+            return self._out.model_validate(res)
         return None
 
     async def create(self, table_dict: dict[str, Any]):
         query = insert(self._table).values(table_dict).returning(self._table)
         res = await self.session.scalar(query)
-        return self._out.from_orm(res)
+        return self._out.model_validate(res)

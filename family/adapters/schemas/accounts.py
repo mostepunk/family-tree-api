@@ -5,7 +5,7 @@ from enum import Enum
 from uuid import UUID
 
 from fastapi.security import SecurityScopes
-from pydantic import validator
+from pydantic import ConfigDict
 
 from family.adapters.schemas.base import BaseDBSchema, BaseSchema
 
@@ -18,12 +18,17 @@ class Roles(str, Enum):
     write: str = "WRITE"
 
 
+class RoleSchema(BaseSchema):
+    level: int
+    name: str
+
+
 class AccountSchema(BaseSchema):
     uuid: UUID
     username: str
     email: str
     is_enable: bool = True
-    roles: list[str]
+    role: RoleSchema
 
     def is_superadmin(self):
         return Roles.superadmin in self.roles
@@ -45,7 +50,8 @@ class AccountDBSchema(AccountSchema, BaseDBSchema):
     last_visit: datetime | None
     hashed_password: str
 
-    @validator("roles", pre=True)
-    @classmethod
-    def validate_roles(cls, role):
-        return [role.name]
+    model_config = ConfigDict(from_attributes=True)
+    # @field_validator("roles", mode="after")
+    # @classmethod
+    # def validate_roles(cls, role):
+    #     return [role.name]

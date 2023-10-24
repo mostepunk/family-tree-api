@@ -4,7 +4,7 @@ from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship, selectinload
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from family.adapters.db.models.base import BaseTable
 
@@ -22,9 +22,7 @@ class AccountModel(BaseTable):
     last_visit: Mapped[datetime | None] = mapped_column(DateTime)
     person_uuid: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
-    roles: Mapped[list["RoleModel"]] = relationship(
-        back_populates="accounts", lazy=selectinload
-    )
+    role: Mapped["RoleModel"] = relationship(back_populates="accounts")
 
 
 class RoleModel(BaseTable):
@@ -46,4 +44,4 @@ class RoleModel(BaseTable):
     level: Mapped[int] = mapped_column(Integer)
     name: Mapped[str] = mapped_column(String(10), unique=True)
 
-    accounts: Mapped[list["AccountModel"] | None] = relationship(back_populates="roles")
+    accounts: Mapped[list["AccountModel"] | None] = relationship(back_populates="role")
