@@ -2,20 +2,36 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from uuid import UUID
 
-from fastapi.security import SecurityScopes
 from pydantic import ConfigDict
 
 from family.adapters.schemas.base import BaseDBSchema, BaseSchema
+from family.resources.role_map import (
+    ADMIN,
+    ADMIN_LEVEL,
+    MODERATOR,
+    MODERATOR_LEVEL,
+    NONE,
+    NONE_LEVEL,
+    READ,
+    WRITE,
+    WRITE_LEVEL,
+)
+
+
+class _AccountDBSchema(_AccountSchema, BaseDBSchema):
+    last_visit: datetime | None
+    hashed_password: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Roles(str, Enum):
-    superadmin: str = "ROOT"
-    all_access: str = "ADMIN"
-    it_staff: str = "IT_SUPPORT"
-    read: str = "READ"
-    write: str = "WRITE"
+    guest: str = NONE
+    read: str = READ
+    write: str = WRITE
+    moderator: str = MODERATOR
+    admin: str = ADMIN
 
 
 class RoleSchema(BaseSchema):
@@ -24,30 +40,22 @@ class RoleSchema(BaseSchema):
 
 
 class AccountSchema(BaseSchema):
-    uuid: UUID
-    username: str
+    user_name: str
     email: str
-    is_enable: bool = True
     role: RoleSchema
 
-    def is_superadmin(self):
-        return Roles.superadmin in self.roles
+    @property
+    def is_admin(self):
+        return self.role.level == ADMIN_LEVEL
 
-    def is_it_staff(self):
-        return Roles.it_staff in self.roles
+    @property
+    def is_moderator(self):
+        return self.role.level == MODERATOR_LEVEL
 
-    def is_superadmin_or_it_staff(self):
-        return any((self.is_superadmin(), self.is_it_staff()))
+    @property
+    def can_read(self):
+        return self.role.level < NONE_LEVEL
 
-    def is_all_access(self):
-        return Roles.all_access.value in self.roles
-
-    def has_access(self, security_scopes: SecurityScopes):
-        return any(role in self.roles for role in security_scopes.scopes)
-
-
-class AccountDBSchema(AccountSchema, BaseDBSchema):
-    last_visit: datetime | None
-    hashed_password: str
-
-    model_config = ConfigDict(from_attributes=True)
+    @property
+    def can_write(self):
+        return self.role.level < WRITE_LEVEL

@@ -7,8 +7,10 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from family.adapters.db.models import AccountModel, RoleModel
+from family.adapters.db.models import AccountModel
 from family.settings import DatabaseSettings, admin_settings, db_settings
+
+# from family.adapters.db.models import AccountModel, RoleModel
 
 engine = create_async_engine(
     db_settings.dsn,
