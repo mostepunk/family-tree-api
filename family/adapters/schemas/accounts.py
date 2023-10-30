@@ -15,13 +15,6 @@ from family.resources.role_map import (
     WRITE_LEVEL,
 )
 
-"""
-class _AccountDBSchema(BaseDBSchema):
-    last_visit: datetime | None
-    hashed_password: str
-    model_config = ConfigDict(from_attributes=True)
-"""
-
 
 class Roles(str, Enum):
     guest: str = NONE

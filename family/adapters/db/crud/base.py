@@ -4,14 +4,14 @@ from uuid import UUID
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from family.adapters.db.models.base import BaseTable
+from family.adapters.db.models.base import Base
 from family.adapters.schemas.base import BaseSchema
 
 
 class BaseCRUD:
     @property
     def _table(self):
-        return BaseTable
+        return Base
 
     @property
     def _out(self):
@@ -20,7 +20,7 @@ class BaseCRUD:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def update(self, table_uuid: UUID, upd_dict: dict[str, Any]) -> BaseTable:
+    async def update(self, table_uuid: UUID, upd_dict: dict[str, Any]) -> Base:
         query = (
             update(self._table)
             .where(self._table.uuid == table_uuid)
