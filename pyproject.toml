@@ -48,6 +48,15 @@ target-version = "py37"
 [tool.ruff.pydocstyle]
 convention = "google"
 
+[tool.pytest.ini_options]
+env_files = [".env"]
+addopts = '''
+  --strict-markers
+  --tb=short
+  --asyncio-mode=auto
+  --disable-warnings
+'''
+
 [project]
 # Support Python 3.10+.
 requires-python = ">=3.10"

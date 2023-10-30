@@ -7,9 +7,9 @@ from family.settings import app_settings
 from family.utils.container import Container
 
 
-def create_app(fastapi_settings: dict) -> FastAPI:
+def create_app() -> FastAPI:
     container = Container()
-    application = FastAPI(**fastapi_settings)
+    application = FastAPI(**app_settings.api_kwargs)
     application.container = container
 
     application.add_middleware(

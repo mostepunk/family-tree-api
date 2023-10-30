@@ -36,7 +36,7 @@ async def about_me(account: Annotated[get_user_from_token, Depends()]):
     return account
 
 
-@login.get("/token", summary="information about authorised user", response_model=str)
+@login.get("/token", summary="токен в виде строки", response_model=str)
 async def token_str(
     request: Request, account: Annotated[get_user_from_token, Depends()]
 ):
