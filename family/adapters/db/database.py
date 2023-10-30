@@ -33,6 +33,7 @@ TIME_SLEEP = 5
 
 
 async def create_superadmin(session):
+    """DEPRECATED."""
     query = select(RoleModel.uuid).where(RoleModel.name == "ROOT")
     role_uuid = await session.scalar(query)
 
@@ -55,7 +56,6 @@ def create_start_app_handler() -> Callable:
                 async with engine.connect() as conn:
                     await conn.execute(text("SELECT 1"))
                     logging.debug("DB connected")
-                    await create_superadmin(conn)
                     break
             except Exception as err:
                 logging.error(f"ERROR: {err}")

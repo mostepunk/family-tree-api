@@ -35,15 +35,16 @@ class AccountService(BaseService):
         if not account:
             raise CREDENTIALS_EXCEPTION
 
-        if not verify_password(password, account.hashed_password):
+        if not verify_password(password, account.password):
             raise CREDENTIALS_EXCEPTION
 
-        logging.debug(f"User: {account.username} Logged In")
-        await self.update_last_visit(account.uuid)
+        logging.debug(f"User: {account.user_name} Logged In")
         return account
 
     async def update_last_visit(self, user_uuid: UUID) -> NoReturn:
         """Update last visit.
+
+        DEPRECATED.
 
         Args:
             user_uuid (UUID): user_uuid

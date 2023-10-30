@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime
 from enum import Enum
 
-from pydantic import ConfigDict
-
-from family.adapters.schemas.base import BaseDBSchema, BaseSchema
+from family.adapters.schemas.base import BaseSchema
 from family.resources.role_map import (
     ADMIN,
     ADMIN_LEVEL,
@@ -18,12 +15,12 @@ from family.resources.role_map import (
     WRITE_LEVEL,
 )
 
-
-class _AccountDBSchema(_AccountSchema, BaseDBSchema):
+"""
+class _AccountDBSchema(BaseDBSchema):
     last_visit: datetime | None
     hashed_password: str
-
     model_config = ConfigDict(from_attributes=True)
+"""
 
 
 class Roles(str, Enum):
@@ -39,9 +36,12 @@ class RoleSchema(BaseSchema):
     name: str
 
 
-class AccountSchema(BaseSchema):
+class AccountBase(BaseSchema):
     user_name: str
     email: str
+
+
+class AccountSchema(AccountBase):
     role: RoleSchema
 
     @property
@@ -59,3 +59,9 @@ class AccountSchema(BaseSchema):
     @property
     def can_write(self):
         return self.role.level < WRITE_LEVEL
+
+
+class AccountDBSchema(AccountSchema):
+    user_id: int
+    real_name: str
+    password: str

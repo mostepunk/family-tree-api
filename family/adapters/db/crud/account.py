@@ -3,10 +3,10 @@ from typing import NoReturn
 from uuid import UUID
 
 from sqlalchemy import select, update
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
 
 from family.adapters.db.crud.base import BaseCRUD
-from family.adapters.db.models import AccountModel, RoleModel
+from family.adapters.db.models import AccountModel
 from family.adapters.schemas.accounts import AccountDBSchema
 
 
@@ -21,9 +21,8 @@ class AccountCRUD(BaseCRUD):
 
     async def get_by_username(self, username: str):
         query = (
-            select(self._table)
-            .where(self._table.username == username)
-            .options(joinedload(self._table.role))
+            select(self._table).where(self._table.user_name == username)
+            # .options(joinedload(self._table.role))
         )
         res = await self.session.scalar(query)
         return self._out.model_validate(res)
@@ -38,7 +37,3 @@ class AccountCRUD(BaseCRUD):
         )
         res = await self.session.scalar(query)
         return self._out.model_validate(res)
-
-    async def get_role_uuid(self, role_name: str) -> UUID:
-        query = select(RoleModel.uuid).where(RoleModel.name == role_name)
-        return (await self.session.scalar(query)).first()

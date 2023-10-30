@@ -23,7 +23,7 @@ async def create_token(
     expires_delta: timedelta | None = None,
 ) -> str:
     to_encode = Token(
-        username=account.username,
+        user_name=account.user_name,
         email=account.email,
         role=account.role.dict(),
     )
@@ -64,13 +64,16 @@ async def get_user_from_token(
     if app_settings.environment == Environment.local:
         return AccountSchema(
             uuid=uuid4(),
-            username="root",
+            user_name="root",
             email="root@domain.com",
-            role={"level": 0, "name": Roles.superadmin},
+            role={"level": 0, "name": Roles.admin},
         )
 
     try:
-        account = AccountSchema.parse_obj(decode_token(token))
+        decoded = decode_token(token)
+        logging.info(f"DECODED: {decoded}")
+        # account = AccountSchema.parse_obj(decode_token(token))
+        account = AccountSchema.parse_obj(decoded)
     except ValidationError:
         logging.error(f"Invalid schema from token. schema = {decode_token(token)}")
         raise HTTPException(status_code=403, detail="Invalid user schema from token")
