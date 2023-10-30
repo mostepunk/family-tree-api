@@ -48,6 +48,15 @@ target-version = "py37"
 [tool.ruff.pydocstyle]
 convention = "google"
 
+[tool.pytest.ini_options]
+env_files = [".env"]
+addopts = '''
+  --strict-markers
+  --tb=short
+  --asyncio-mode=auto
+  --disable-warnings
+'''
+
 [project]
 # Support Python 3.10+.
 requires-python = ">=3.10"
@@ -87,7 +96,10 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "f
 "BaseUOW" = "from family.services.base import BaseUOW"
 "BaseCRUD" = "from family.adapters.db.crud.base import BaseCRUD"
 "AccountDBSchema" = "from family.adapters.schemas.accounts import AccountDBSchema"
+"AccountModel" = "from family.adapters.db.models import AccountModel"
+"Container" = "from family.utils.container import Container"
 "BaseTable" = "from family.adapters.db.models.base import BaseTable"
+"Base" = "from family.adapters.db.models.base import Base"
 
 [tool.isort]
 known_first_party = ["family"]

@@ -110,6 +110,7 @@ class DatabaseSettings(BaseSettings):
     db_name: str
 
     echo: bool = False
+    echo_pool: bool = False
 
     db_pool_min_size: PositiveInt = 1
     db_pool_max_size: PositiveInt = 1

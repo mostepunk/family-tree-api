@@ -4,10 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from family.adapters.db.database import create_start_app_handler
 from family.api.errors import http_error_handler
 from family.settings import app_settings
+from family.utils.container import Container
 
 
-def create_app(fastapi_settings: dict) -> FastAPI:
-    application = FastAPI(**fastapi_settings)
+def create_app() -> FastAPI:
+    container = Container()
+    application = FastAPI(**app_settings.api_kwargs)
+    application.container = container
 
     application.add_middleware(
         CORSMiddleware,

@@ -1,8 +1,9 @@
 from .base import Base  # isort:skip
-from .accounts import AccountModel, RoleModel
+from .accounts import AccountFTSettings, AccountModel, AccountSettings
 
 __all__ = [
     "Base",
     "AccountModel",
-    "RoleModel",
+    "AccountFTSettings",
+    "AccountSettings",
 ]

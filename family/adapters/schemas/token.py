@@ -7,7 +7,7 @@ from family.adapters.schemas.base import BaseSchema
 
 
 class Token(BaseSchema):
-    username: str
+    user_name: str
     email: str | None
     role: RoleSchema
     exp: datetime | None = None

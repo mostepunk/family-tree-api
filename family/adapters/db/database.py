@@ -2,13 +2,11 @@ import asyncio
 from typing import Callable
 
 from loguru import logger as logging
-from sqlalchemy import select, text
-from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy import orm, text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from family.adapters.db.models import AccountModel, RoleModel
-from family.settings import admin_settings, db_settings
+from family.settings import DatabaseSettings, db_settings
 
 engine = create_async_engine(
     db_settings.dsn,
@@ -30,32 +28,23 @@ NUMBER_OF_ATTEMPTS = 3
 TIME_SLEEP = 5
 
 
-async def create_superadmin(session):
-    query = select(RoleModel.uuid).where(RoleModel.name == "ROOT")
-    role_uuid = await session.scalar(query)
-
-    credentials = admin_settings.credentials
-    credentials["role_uuid"] = role_uuid
-
-    query = pg_insert(AccountModel).values(credentials).returning(AccountModel)
-    admin = await session.scalar(query.on_conflict_do_nothing())
-    await session.commit()
-
-    if admin:
-        logging.debug(f"Created SuperUser: {admin}")
-
-
 def create_start_app_handler() -> Callable:
+    """create_start_app_handler.
+
+    Returns:
+        Callable:
+    """
+
     async def check_database() -> None:
+        """check database connection."""
         attempt = 0
         while True:
             try:
                 async with engine.connect() as conn:
                     await conn.execute(text("SELECT 1"))
                     logging.debug("DB connected")
-                    await create_superadmin(conn)
                     break
-            except Exception as err:
+            except Exception as err:  # noqa:BLE001
                 logging.error(f"ERROR: {err}")
                 if attempt < NUMBER_OF_ATTEMPTS:
                     logging.error(f"try connect to db...{attempt}")
@@ -63,16 +52,47 @@ def create_start_app_handler() -> Callable:
                     await asyncio.sleep(TIME_SLEEP)
                 else:
                     logging.critical("Can`t connect to DB")
-                    raise err
+                    raise err  # noqa:TRY201 Use `raise` without specifying exception name
 
     return check_database
 
 
 async def get_session() -> AsyncSession:
+    """get session.
+
+    Returns:
+        AsyncSession:
+    """
     async with async_session() as session:
         try:
             yield session
         finally:
-            # это надо при подключении через PGBouncer
-            # await session.rollback()
             await session.close()
+
+
+class Database:
+    """Database Singleton for UOW Container."""
+
+    def __init__(self, db_settings: DatabaseSettings) -> None:
+        self._engine = create_async_engine(
+            db_settings.dsn,
+            pool_pre_ping=True,
+            pool_use_lifo=True,
+            pool_size=20,
+            echo=db_settings.echo,
+            echo_pool=db_settings.echo_pool,
+            max_overflow=5,
+        )
+        self._session_factory = orm.scoped_session(
+            sessionmaker(
+                autocommit=False,
+                autoflush=False,
+                class_=AsyncSession,
+                bind=self._engine,
+                expire_on_commit=False,
+            ),
+        )
+
+    def session(self):
+        """session."""
+        return self._session_factory()
