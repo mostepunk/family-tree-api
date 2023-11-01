@@ -4,7 +4,9 @@ from fastapi import APIRouter
 
 from family.api.v1.healthcheck import healthcheck
 from family.api.v1.login import login
+from family.api.v1.person import person
 
 v1_router = APIRouter(prefix="/v1")
 v1_router.include_router(healthcheck)
 v1_router.include_router(login)
+v1_router.include_router(person)

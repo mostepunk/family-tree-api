@@ -75,20 +75,31 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "f
 "UUID" = "from uuid import UUID"
 "uuid4" = "fomr uuid import uuid4"
 "timedelta" = "from datetime import timedelta"
+"pprint" = "from pprint import pprint"
 
 # installed libs
-"select" = "from sqlalchemy import select"
-"update" = "from sqlalchemy import update"
 "logging" = "from loguru import logger as logging"
+
 "validator" = "from pydantic import validator"
-"contains_eager" = "from sqlalchemy.orm import contains_eager"
-"selectinload" = "from sqlalchemy.orm import selectinload"
 "root_validator" = "from pydantic import root_validator"
 "parse_obj_as" = "from pydantic import parse_obj_as"
-"func" = "from sqlalchemy import func"
+
 "APIRouter" = "from fastapi import APIRouter"
 "Depends"= "from fastapi import Depends"
+
+"select" = "from sqlalchemy import select"
+"update" = "from sqlalchemy import update"
+"contains_eager" = "from sqlalchemy.orm import contains_eager"
+"selectinload" = "from sqlalchemy.orm import selectinload"
+"func" = "from sqlalchemy import func"
 "AsyncSession" = "from sqlalchemy.ext.asyncio import AsyncSession"
+"Mapped" = "from sqlalchemy.orm import Mapped"
+"mapped_column" = "from sqlalchemy.orm import mapped_column"
+"relationship" = "from sqlalchemy.orm import relationship"
+"ForeignKey" = "from sqlalchemy import ForeignKey"
+"PrimaryKeyConstraint" = "from sqlalchemy import PrimaryKeyConstraint"
+"UniqueConstraint" = "from sqlalchemy import UniqueConstraint"
+"String" = "from sqlalchemy import String"
 
 # project libs
 "BaseSchema" = "from family.adapters.schemas.base import BaseSchema"
@@ -100,6 +111,9 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "f
 "Container" = "from family.utils.container import Container"
 "BaseTable" = "from family.adapters.db.models.base import BaseTable"
 "Base" = "from family.adapters.db.models.base import Base"
+"PersonCRUD" = "from family.adapters.db.crud import PersonCRUD"
+"PersonDBSchema" = "from family.adapters.schemas.persons import PersonDBSchema"
+"PersonService" = "from family.services.persons import PersonService"
 
 [tool.isort]
 known_first_party = ["family"]
