@@ -13,7 +13,7 @@ class Individual:
     def __setitem__(self, key, value):
         if "INDI" in value:
             self.set_indi(key)
-        elif key == "sex":
+        elif key == "SEX":
             self.sex = value
         else:
             self.create_tag(key, value)
@@ -39,9 +39,6 @@ class Individual:
         но на этот же тег не присваивает тип MARRIED,
         Вместо этого парсер видит второй уровень, и ищет первую попавшуюся фамилию,
         а это 1 NAME Ann /Smith/
-
-        надо сделать более точный поиск
-        indi.find(TAG_NAME, TAG_VALUE)
         """
         for tag in self.tags:
             if tag.name == name and tag.value == value:
@@ -71,7 +68,7 @@ class Individual:
     @property
     def family_child(self):
         for tag in self.tags:
-            if tag.name == "famc":
+            if tag.name == "FAMC":
                 return tag.value
 
     @property
@@ -82,7 +79,7 @@ class Individual:
     def b_day(self):
         b_day_dict = {"date": "unknown"}
         for tag in self.tags:
-            if tag.name == "birt":
+            if tag.name == "BIRT":
                 b_day_dict.update(tag.__dict__)
                 del b_day_dict["name"]
                 del b_day_dict["value"]

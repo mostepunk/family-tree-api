@@ -27,7 +27,6 @@ class GedcomParser:
                 value = " ".join(values)
             else:
                 value = values
-            key = key.lower()
 
             if number > level:
                 tag = indi.find_tag(upper_key, upper_value)
