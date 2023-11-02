@@ -120,6 +120,17 @@ GEDCOM_TAG_NAME = "NAME"
 A word or combination of words used to help identify an individual, title, or other item.
 More than one NAME line should be used for people who were known by multiple names."""
 
+GEDCOM_TAG_MARRIED_TYPE = "MARRIED"
+"""Value: `MARRIED`
+
+Used in webtrees in NAME:
+1 NAME Ann /Smith/
+2 GIVN Ann
+2 SURN Smith
+1 NAME Doe
+2 TYPE MARRIED
+"""
+
 GEDCOM_TAG_OBJECT = "OBJE"
 """Value: `OBJE`
 

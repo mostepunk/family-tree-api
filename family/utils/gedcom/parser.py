@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 from family.utils.gedcom.individual import Individual
+from family.utils.gedcom.standart import GEDCOM_TAG_INDIVIDUAL
 
 
 class GedcomParser:
     @classmethod
     def parse(cls, record: str):
         lines = record.split("\n")
-        if "INDI" in lines[0]:
+        if GEDCOM_TAG_INDIVIDUAL in lines[0]:
             return cls.parse_individual(lines)
+        return None
 
     @classmethod
     def parse_individual(cls, record: str):

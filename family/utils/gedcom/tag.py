@@ -3,9 +3,6 @@ class Tag:
         self.name = name
         self.value = value
 
-    def name_map(self, name: str):
-        return {"birt": "Bday"}.get(name, name)
-
     def __setitem__(self, name, value):
         self.name = name
         self.value = value
@@ -25,6 +22,12 @@ class Tag:
             return default
 
     def update(self, name, value):
-        if isinstance(value, list):
-            value = " ".join(value)
         setattr(self, name, value)
+
+    def dict(self):
+        tag_dict = {}
+        for key, value in self.__dict__.items():
+            if key in ("name", "TYPE"):
+                continue
+            tag_dict[key] = value
+        return tag_dict
