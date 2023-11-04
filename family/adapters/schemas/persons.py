@@ -17,9 +17,9 @@ class PersonName(BaseSchema):
 
 
 class PersonDate(BaseSchema):
-    date: str | None
-    plac: str | None
-    addr: str | None
+    date: str | None = None
+    plac: str | None = None
+    addr: str | None = None
 
 
 class PersonDBSchema(BaseSchema):
@@ -33,8 +33,16 @@ class PersonDBSchema(BaseSchema):
 class PersonAnswer(BaseSchema):
     id_: str = Field(alias="id")
     sex: SexEnum
-    name: PersonName
-    born: PersonDate
-    media: list[str]
-    family_partners: list[str]
-    family_child: list[str]
+    name: PersonName | None
+    born: PersonDate | None
+    media: list[str] | None
+    family_spose: list[str] | None
+    family_child: list[str] | None
+
+
+class PersonFamily(BaseSchema):
+    person: PersonAnswer
+    wifes: list[PersonAnswer] | None
+    husbands: list[PersonAnswer] | None
+    mothers: list[PersonAnswer] = None
+    fathers: list[PersonAnswer] = None

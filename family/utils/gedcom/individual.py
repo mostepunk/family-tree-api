@@ -148,7 +148,7 @@ class Individual:
             "name": self.name,
             "born": self.b_day,
             "media": self.obje,
-            "family_partners": self.families,
+            "family_spose": self.families,
             "family_child": self.family_child,
         }
         return indi_dict

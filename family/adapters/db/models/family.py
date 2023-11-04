@@ -18,6 +18,7 @@ from sqlalchemy import Integer, PrimaryKeyConstraint, String, Text, UniqueConstr
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from family.adapters.db.models.base import Base
+from family.utils.gedcom.standart import GEDCOM_TAG_CHILD
 
 
 class FamilyModel(Base):
@@ -35,20 +36,35 @@ class FamilyModel(Base):
     f_gedcom: Mapped[str] = mapped_column(Text)
     f_numchil: Mapped[int] = mapped_column(Integer)
 
-    husband: Mapped["PersonModel"] = relationship( # noqa:F821
+    husband: Mapped["PersonModel"] = relationship(  # noqa:F821
         primaryjoin="FamilyModel.f_husb == PersonModel.i_id",
         lazy="selectin",
         foreign_keys=f_husb,
     )
-    wife: Mapped["PersonModel"] = relationship( # noqa:F821
+    wife: Mapped["PersonModel"] = relationship(  # noqa:F821
         primaryjoin="FamilyModel.f_wife == PersonModel.i_id",
         lazy="selectin",
         foreign_keys=f_wife,
     )
 
+    # father: Mapped[list["FamilyModel"]] = relationship(
+    #     secondary="link",
+    #     primaryjoin=f"and_(FamilyModel.f_id == LinkModel.l_from, LinkModel.l_type == '{GEDCOM_TAG_CHILD}')",
+    #     secondaryjoin="LinkModel.l_to == PersonModel.i_id",
+    #     uselist=False,
+    #     lazy="selectin",
+    #     foreign_keys=f_id,
+    # )
+
+    # mother: Mapped[list["FamilyModel"]] = relationship(
+    #     secondary="link",
+    #     primaryjoin=f"and_(FamilyModel.f_id == LinkModel.l_from, LinkModel.l_type == '{GEDCOM_TAG_CHILD}')",
+    #     secondaryjoin="LinkModel.l_to == PersonModel.i_id",
+    #     uselist=False,
+    #     lazy="selectin",
+    #     foreign_keys=f_id,
+    # )
+
+
     def __repr__(self):
         return f"<Family Husb: {self.f_husb} Wife: {self.f_wife}>"
-
-
-# TODO: Описать таблицу links, она показвает связи со всеми объектами в сем древе
-# Ее можно использовать как развязочную, и строить глубокие связи

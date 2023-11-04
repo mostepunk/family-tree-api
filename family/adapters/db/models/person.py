@@ -26,6 +26,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from family.adapters.db.models.base import Base
 from family.utils.gedcom import GedcomParser, Individual
+from family.utils.gedcom.standart import GEDCOM_TAG_FAMILY_CHILD
 
 
 class PersonModel(Base):
@@ -48,6 +49,14 @@ class PersonModel(Base):
         primaryjoin="or_(PersonModel.i_id == FamilyModel.f_husb, PersonModel.i_id == FamilyModel.f_wife)",
         foreign_keys=i_id,
         uselist=True,
+    )
+    parents: Mapped[list["FamilyModel"]] = relationship(
+        secondary="link",
+        primaryjoin=f"and_(PersonModel.i_id == LinkModel.l_from, LinkModel.l_type == '{GEDCOM_TAG_FAMILY_CHILD}')",
+        secondaryjoin="LinkModel.l_to == FamilyModel.f_id",
+        uselist=True,
+        lazy="selectin",
+        foreign_keys="LinkModel.l_from, LinkModel.l_to",
     )
 
     @property
