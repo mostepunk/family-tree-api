@@ -1,3 +1,5 @@
+import json
+
 from family.utils.gedcom.standart import (
     GEDCOM_TAG_BIRTH,
     GEDCOM_TAG_FAMILY_CHILD,
@@ -138,3 +140,18 @@ class Individual:
                 pers_name["given_surn"] = surname
 
         return pers_name
+
+    def dict(self) -> dict[str, str]:
+        indi_dict = {
+            "id": self.id_,
+            "sex": self.sex,
+            "name": self.name,
+            "born": self.b_day,
+            "media": self.obje,
+            "family_partners": self.families,
+            "family_child": self.family_child,
+        }
+        return indi_dict
+
+    def json(self) -> str:
+        return json.loads(self.dict())

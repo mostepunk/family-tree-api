@@ -1,9 +1,10 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
 
-from family.adapters.schemas.persons import PersonDBSchema
 from family.services.persons import PersonService
 from family.utils.container import Container
+
+# from family.adapters.schemas.persons import PersonAnswer
 
 person = APIRouter(prefix="/persons", tags=["Persons"])
 
@@ -11,7 +12,7 @@ person = APIRouter(prefix="/persons", tags=["Persons"])
 @person.get(
     "/{person_id}",
     summary="Info about person",
-    response_model=PersonDBSchema,
+    # response_model=PersonAnswer,
 )
 @inject
 async def person_info(

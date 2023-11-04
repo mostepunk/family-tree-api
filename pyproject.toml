@@ -41,6 +41,7 @@ ignore = [
     "RUF003",
     "G004",     # Logging statement uses f-string
     "N805",     # First argument of a method should be named `self`
+    "FA102",    # Missing `from __future__ import annotations`, but uses PEP 585 collection
     ]
 line-length = 120
 target-version = "py37"
@@ -63,6 +64,8 @@ requires-python = ">=3.10"
 
 [tool.ruff.per-file-ignores]
 "family/adapters/db/models/__init__.py" = ["F401", "F403"]
+"plgr.py" = ["T203"]
+"plgr*" = ["T203", "T201"]
 
 [tool.ruff.flake8-builtins]
 builtins-ignorelist = ["id"]
@@ -114,6 +117,8 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "f
 "PersonCRUD" = "from family.adapters.db.crud import PersonCRUD"
 "PersonDBSchema" = "from family.adapters.schemas.persons import PersonDBSchema"
 "PersonService" = "from family.services.persons import PersonService"
+"PersonModel" = "from family.adapters.db.models import PersonModel"
+"FamilyModel" = "from family.adapters.db.models import FamilyModel"
 
 [tool.isort]
 known_first_party = ["family"]

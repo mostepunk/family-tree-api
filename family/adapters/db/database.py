@@ -14,6 +14,7 @@ engine = create_async_engine(
     pool_use_lifo=True,
     pool_size=20,
     echo=False,
+    # echo=True,
     max_overflow=5,
 )
 async_session = sessionmaker(

@@ -1,5 +1,6 @@
 from .base import Base  # isort:skip
 from .accounts import AccountFTSettings, AccountModel, AccountSettings
+from .family import FamilyModel
 from .person import PersonModel
 
 __all__ = [
@@ -7,5 +8,6 @@ __all__ = [
     "AccountModel",
     "AccountFTSettings",
     "AccountSettings",
+    "FamilyModel",
     "PersonModel",
 ]

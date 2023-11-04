@@ -22,7 +22,7 @@ CREATE TABLE public.individuals (
 """
 
 from sqlalchemy import PrimaryKeyConstraint, String, Text, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from family.adapters.db.models.base import Base
 from family.utils.gedcom import GedcomParser, Individual
@@ -44,6 +44,15 @@ class PersonModel(Base):
     i_sex: Mapped[str] = mapped_column(String(255))
     i_gedcom: Mapped[str] = mapped_column(Text)
 
+    families: Mapped[list["FamilyModel"]] = relationship(
+        primaryjoin="or_(PersonModel.i_id == FamilyModel.f_husb, PersonModel.i_id == FamilyModel.f_wife)",
+        foreign_keys=i_id,
+        uselist=True,
+    )
+
     @property
     def individual(self) -> Individual:
         return GedcomParser.parse_individual(self.i_gedcom)
+
+    def __repr__(self):
+        return f"Individual: {self.i_id}, {self.individual.name.get('name')}"
