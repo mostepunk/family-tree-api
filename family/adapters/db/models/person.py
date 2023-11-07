@@ -61,6 +61,7 @@ class PersonModel(Base):
 
     @property
     def individual(self) -> Individual:
+        return None
         return GedcomParser.parse_individual(self.i_gedcom)
 
     def __repr__(self):
